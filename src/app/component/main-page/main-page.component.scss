@@ -1,0 +1,33 @@
+.gridiron-logo {
+  grid-area: header;
+}
+.home-helmet {
+  grid-area: home-helmet;
+}
+.away-helmet {
+  grid-area: away-helmet;
+}
+.avatar {
+  grid-area: avatar;
+}
+.home-stats {
+  grid-area: home-stats;
+}
+
+.away-stats {
+  grid-area: away-stats;
+}
+
+.container-new {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  grid-template-columns: 10% 38% 4% 38% 10%;
+  grid-template-rows: 25% 25% 25% 10% 15%;
+  grid-template-areas:
+    "header . . . avatar"
+    ". . . . ."
+    ". home-helmet . away-helmet ."
+    ". . . . ."
+    ". home-stats . away-stats .";
+}
