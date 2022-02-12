@@ -9,6 +9,16 @@
 }
 .avatar {
   grid-area: avatar;
+  margin-right: 20%;
+}
+.avatar-image{
+  background-color: white;
+  border-radius: 50%;
+  border: 5px solid gray;
+}
+.avatar-dropdown{
+  position: absolute;
+  right: 2%;
 }
 .home-stats {
   grid-area: home-stats;

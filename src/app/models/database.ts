@@ -7,7 +7,7 @@ export interface User{
   id: number;
   userName: string;
   password: string;
-  profilePic: number;
+  profilePic: string;
   bettingRecord: number;
   bettingHistory: string[];
 }

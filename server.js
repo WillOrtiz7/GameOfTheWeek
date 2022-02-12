@@ -1,6 +1,17 @@
 require("dotenv").config();
 const express = require('express');
 const app = express();
+const cors = require("cors");
+app.use(cors({
+  origin: "*",
+}));
+var bodyParser = require('body-parser')
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
 const port = 3000;
 const DB_USERNAME = process.env.DB_USERNAME;
 const DB_PASSWORD = process.env.DB_PASSWORD;
@@ -10,14 +21,18 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 app.post("/login", function(req, res){
   console.log(req.body);
   client.connect(err => {
-  const collection = client.db("gameOfTheWeek").collection("users");
-  // perform actions on the collection object
-  collection.findOne({userName:"Giants"}).then((data)=>{
-    res.send(data);
-    console.log(data);
-    client.close();
+    if (err){
+      console.log(err);
+      return
+    }
+    const collection = client.db("gameOfTheWeek").collection("users");
+    // perform actions on the collection object
+    collection.findOne({username:req.body.userName, password:req.body.password}).then((data)=>{
+      res.send(data);
+      console.log(data);
+      client.close();
+    });
   });
-});
 })
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));

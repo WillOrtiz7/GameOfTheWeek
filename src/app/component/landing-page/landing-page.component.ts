@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -9,13 +11,28 @@ import { HttpClient } from '@angular/common/http';
 export class LandingPageComponent implements OnInit {
   username:string = "";
   password:string = "";
-  constructor(private http:HttpClient) { }
+  failedLogin:boolean = false;
+  constructor(private http:HttpClient, private router:Router, private userService:UserService) { }
 
   ngOnInit(): void {
+    // Redirects user to main page after refreshing if they are already logged in
+    if (this.userService.user){
+      this.router.navigateByUrl("/mainPage");
+    }
   }
 
   login(): void{
-    this.http.post("http://127.0.0.1:3000/login", JSON.stringify({username:this.username, password:this.password}));
+    let headers = new HttpHeaders().set('Access-Control-Allow-Origin', '*');
+    this.http.post("http://localhost:3000/login", {username:this.username, password:this.password}, {headers}).subscribe((result:any)=>{
+      // Redirects user to main page after logging in
+      if (result){
+        this.userService.user = result;
+        this.router.navigateByUrl("/mainPage");
+      }
+      else{
+        this.failedLogin = true;
+      }
+    });
   }
 
 }
