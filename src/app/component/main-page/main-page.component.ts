@@ -11,6 +11,8 @@ import { UserService } from 'src/app/services/user.service';
 export class MainPageComponent implements OnInit {
   user!:User | null;
   avatarDropdown:boolean = false;
+  votedHome:boolean = false;
+  votedAway:boolean = false;
 
   constructor(private userService:UserService, private router:Router) { }
 
@@ -31,6 +33,18 @@ export class MainPageComponent implements OnInit {
     localStorage.clear();
     this.router.navigateByUrl("/");
 
+  }
+
+  vote(teamType:"home" | "away"): void{
+    if (teamType == "home"){
+      this.votedHome = true;
+      this.votedAway = false;
+    }
+    else{
+      this.votedAway = true;
+      this.votedHome = false;
+    }
+    console.log("Voted home: " + this.votedHome + " Voted away: " + this.votedAway);
   }
 
 }
