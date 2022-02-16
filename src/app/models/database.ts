@@ -8,6 +8,8 @@ export interface User{
   userName: string;
   password: string;
   profilePic: string;
+  votedHome:boolean;
+  votedAway:boolean;
   bettingRecord: number;
   bettingHistory: string[];
 }

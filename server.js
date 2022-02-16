@@ -23,7 +23,7 @@ app.post("/login", function(req, res){
   client.connect(err => {
     if (err){
       console.log(err);
-      return
+      return;
     }
     const collection = client.db("gameOfTheWeek").collection("users");
     // perform actions on the collection object
@@ -33,6 +33,37 @@ app.post("/login", function(req, res){
       client.close();
     });
   });
-})
+});
+
+app.put("/vote", function(req, res){
+  client.connect(err => {
+    if (err){
+      console.log(err);
+      return;
+    }
+    const collection = client.db("gameOfTheWeek").collection("users");
+    collection.findOneAndUpdate({username:req.body.userName}, {$set:{votedHome:req.body.votedHome, votedAway:req.body.votedAway}}).then((data)=>{
+      res.send(true);
+      console.log(data);
+      client.close();
+    });
+  });
+});
+
+app.post("/teams", function(req, res){
+  client.connect(err => {
+    if (err){
+      console.log(err);
+      return;
+    }
+    const collection = client.db("gameOfTheWeek").collection("teams");
+    collection.findOne({teamName:req.body.homeTeamName}, function(err, teams){
+      console.log(teams);
+    });
+    collection.findOne({teamName:req.body.awayTeamName}, function(err, teams){
+      console.log(teams);
+    })
+  });
+});
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
