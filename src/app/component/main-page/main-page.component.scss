@@ -28,6 +28,10 @@
   grid-area: away-stats;
 }
 
+.away-helmet-img{
+  transform: scaleX(-1);
+}
+
 .container-new {
   display: grid;
   place-items: center;

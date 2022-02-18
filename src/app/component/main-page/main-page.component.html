@@ -27,35 +27,29 @@
 
   <div class="home-helmet">
     <img
-      class="helmet-img"
-      src="../assets/TeamHelmets/helmet2.png"
+      class="home-helmet-img"
+      src="../assets/TeamHelmets/helmet{{homeTeamName}}.png"
       alt="HomeTeamHelmet"
     />
   </div>
 
   <div class="away-helmet">
     <img
-      class="helmet-img"
-      src="../assets/TeamHelmets/PatriotsHelmet.png"
+      class="away-helmet-img"
+      src="../assets/TeamHelmets/helmet{{awayTeamName}}.png"
       alt="AwayTeamHelmet"
     />
   </div>
 
   <div class="vote-home">
-    <button class="bg-transparent hover:bg-white text-white font-semibold hover:text-[#120f28] py-2 px-4 border border-white-500 hover:border-transparent rounded" (click)="vote('home')" *ngIf="!votedHome">
-      Vote
-    </button>
-    <button class="bg-green-700 hover:bg-white text-white font-semibold hover:text-[#120f28] py-2 px-4 border border-white-500 hover:border-transparent rounded" *ngIf="votedHome">
-      Voted
+    <button class="bg-transparent hover:bg-white text-white font-semibold hover:text-[#120f28] py-2 px-4 border border-white-500 hover:border-transparent rounded" (click)="vote('home')" [disabled]="!isLive" [ngClass]="votedHome ? 'bg-green-700 hover:bg-green-700': ''">
+      {{!isLive ? "Voting is over": votedHome ? "Voted": "Vote"}}
     </button>
   </div>
 
   <div class="vote-away">
-    <button class="bg-transparent hover:bg-white text-white font-semibold hover:text-[#120f28] py-2 px-4 border border-white-500 hover:border-transparent rounded" (click)="vote('away')" *ngIf="!votedAway">
-      Vote
-    </button>
-    <button class="bg-green-700 hover:bg-white text-white font-semibold hover:text-[#120f28] py-2 px-4 border border-white-500 hover:border-transparent rounded" *ngIf="votedAway">
-      Voted
+    <button class="bg-transparent hover:bg-white text-white font-semibold hover:text-[#120f28] py-2 px-4 border border-white-500 hover:border-transparent rounded" (click)="vote('away')" [disabled]="!isLive" [ngClass]="votedAway ? 'bg-green-700 hover:bg-green-700': ''">
+      {{!isLive ? "Voting is over": votedAway ? "Voted": "Vote"}}
     </button>
   </div>
 </div>

@@ -14,6 +14,9 @@ export class MainPageComponent implements OnInit {
   avatarDropdown:boolean = false;
   votedHome:boolean = false;
   votedAway:boolean = false;
+  isLive:boolean = true;
+  homeTeamName:string = "";
+  awayTeamName:string = "";
 
   constructor(private userService:UserService, private router:Router, private http:HttpClient) { }
 
@@ -24,12 +27,20 @@ export class MainPageComponent implements OnInit {
     }
     // Setting voted home and away to what is stored in the database
     this.user = this.userService.user;
-    this.votedHome = this.user?.votedHome || false;
-    this.votedAway = this.user?.votedAway || false;
-
-    this.http.post("http://localhost:3000/teams", {homeTeamName:"Falcons", awayTeamName:"Ravens"}).subscribe((result:any)=>{
-      console.log(result);
+    console.log(this.user);
+    this.http.post("http://localhost:3000/login", {username:this.user?.userName, password:this.user?.password}).subscribe((user:any)=>{
+      this.user = user;
+      this.votedHome = this.user?.votedHome || false;
+      this.votedAway = this.user?.votedAway || false;
+      console.log(user);
     });
+
+    // Gets the current matchup from database
+    this.http.get("http://localhost:3000/currentMatchup").subscribe((result:any)=>{
+      this.homeTeamName = result.homeTeamName;
+      this.awayTeamName = result.awayTeamName;
+      this.isLive = result.isLive;
+    })
   }
 
   dropdown(): void{
@@ -51,7 +62,7 @@ export class MainPageComponent implements OnInit {
       let headers = new HttpHeaders().set('Access-Control-Allow-Origin', '*');
       this.http.put("http://localhost:3000/vote", {username:this.user?.userName, votedHome:this.votedHome, votedAway:this.votedAway}).subscribe((result:any)=>{
         // Redirects user to main page after logging in
-        let user = this.user || {}as User;
+        let user = this.userService.user || {}as User;
         user.votedHome = this.votedHome;
         user.votedAway = this.votedAway;
         this.userService.user = user;
@@ -63,7 +74,7 @@ export class MainPageComponent implements OnInit {
       let headers = new HttpHeaders().set('Access-Control-Allow-Origin', '*');
       this.http.put("http://localhost:3000/vote", {username:this.user?.userName, votedHome:this.votedHome, votedAway:this.votedAway}).subscribe((result:any)=>{
         // Redirects user to main page after logging in
-        let user = this.user || {}as User;
+        let user = this.userService.user || {}as User;
         user.votedHome = this.votedHome;
         user.votedAway = this.votedAway;
         this.userService.user = user;
