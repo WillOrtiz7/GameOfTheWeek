@@ -4,7 +4,7 @@ export interface Database {
 }
 
 export interface User{
-  id: number;
+  _id: number;
   userName: string;
   password: string;
   profilePic: string;

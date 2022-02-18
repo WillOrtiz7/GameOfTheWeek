@@ -9,12 +9,14 @@ import {ReactiveFormsModule} from "@angular/forms";
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule} from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { ChangePasswordComponent } from './component/change-password/change-password.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LandingPageComponent,
-    MainPageComponent
+    MainPageComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,

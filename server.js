@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 const port = 3000;
 const DB_USERNAME = process.env.DB_USERNAME;
 const DB_PASSWORD = process.env.DB_PASSWORD;
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@game-of-the-week.xa6jr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -108,6 +108,25 @@ app.get("/currentMatchup", function (req, res) {
     collection.findOne({}, function (err, result) {
       res.send(result);
     });
+  });
+});
+
+app.post("/changePassword", function (req, res) {
+  client.connect((err) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    // Queries the userid for the user who made the http request, and sets the users password to what the user input
+    const userCollection = client.db("gameOfTheWeek").collection("users");
+    console.log(req.body);
+    userCollection.findOneAndUpdate(
+      { _id: ObjectId(req.body._id) },
+      { $set: { password: req.body.password } },
+      function (err, result) {
+        res.send(true);
+      }
+    );
   });
 });
 

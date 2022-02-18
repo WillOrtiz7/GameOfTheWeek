@@ -4,31 +4,52 @@
   </div>
 
   <div class="avatar">
-    <img *ngIf="user" src="{{'/assets/ProfilePics/' + user?.profilePic + '.png'}}" alt="Avatar" class="avatar-image" (click)="dropdown()"/>
-      <!-- Dropdown menu -->
-    <div *ngIf="avatarDropdown" class="z-10 text-base list-none bg-white divide-y divide-gray-100 rounded shadow w-44 dark:bg-gray-700 avatar-dropdown">
+    <img
+      *ngIf="user"
+      src="{{ '/assets/ProfilePics/' + user?.profilePic + '.png' }}"
+      alt="Avatar"
+      class="avatar-image"
+      (click)="dropdown()"
+    />
+    <!-- Dropdown menu -->
+    <div
+      *ngIf="avatarDropdown"
+      class="z-10 text-base list-none bg-white divide-y divide-gray-100 rounded shadow w-44 dark:bg-gray-700 avatar-dropdown"
+    >
       <ul class="py-1">
         <li>
-          <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a>
+          <a
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+            >Dashboard</a
+          >
         </li>
         <li>
-          <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a>
+          <a
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+            >Settings</a
+          >
         </li>
         <li>
-          <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Earnings</a>
+          <a
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white" (click)="navigateChangePassword()"
+            >Change Password
+          </a>
         </li>
         <li>
-          <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white" (click)="logOut()">Sign out</a>
+          <a
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+            (click)="logOut()"
+            >Sign out</a
+          >
         </li>
       </ul>
     </div>
   </div>
 
-
   <div class="home-helmet">
     <img
       class="home-helmet-img"
-      src="../assets/TeamHelmets/helmet{{homeTeamName}}.png"
+      src="../assets/TeamHelmets/helmet{{ homeTeamName }}.png"
       alt="HomeTeamHelmet"
     />
   </div>
@@ -36,20 +57,30 @@
   <div class="away-helmet">
     <img
       class="away-helmet-img"
-      src="../assets/TeamHelmets/helmet{{awayTeamName}}.png"
+      src="../assets/TeamHelmets/helmet{{ awayTeamName }}.png"
       alt="AwayTeamHelmet"
     />
   </div>
 
   <div class="vote-home">
-    <button class="bg-transparent hover:bg-white text-white font-semibold hover:text-[#120f28] py-2 px-4 border border-white-500 hover:border-transparent rounded" (click)="vote('home')" [disabled]="!isLive" [ngClass]="votedHome ? 'bg-green-700 hover:bg-green-700': ''">
-      {{!isLive ? "Voting is over": votedHome ? "Voted": "Vote"}}
+    <button
+      class="bg-transparent hover:bg-white text-white font-semibold hover:text-[#120f28] py-2 px-4 border border-white-500 hover:border-transparent rounded"
+      (click)="vote('home')"
+      [disabled]="!isLive"
+      [ngClass]="votedHome ? 'bg-green-700 hover:bg-green-700' : ''"
+    >
+      {{ !isLive ? "Voting is over" : votedHome ? "Voted" : "Vote" }}
     </button>
   </div>
 
   <div class="vote-away">
-    <button class="bg-transparent hover:bg-white text-white font-semibold hover:text-[#120f28] py-2 px-4 border border-white-500 hover:border-transparent rounded" (click)="vote('away')" [disabled]="!isLive" [ngClass]="votedAway ? 'bg-green-700 hover:bg-green-700': ''">
-      {{!isLive ? "Voting is over": votedAway ? "Voted": "Vote"}}
+    <button
+      class="bg-transparent hover:bg-white text-white font-semibold hover:text-[#120f28] py-2 px-4 border border-white-500 hover:border-transparent rounded"
+      (click)="vote('away')"
+      [disabled]="!isLive"
+      [ngClass]="votedAway ? 'bg-green-700 hover:bg-green-700' : ''"
+    >
+      {{ !isLive ? "Voting is over" : votedAway ? "Voted" : "Vote" }}
     </button>
   </div>
 </div>
