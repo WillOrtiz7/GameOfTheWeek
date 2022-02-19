@@ -1,0 +1,17 @@
+{
+  "name": "gridiron_hub",
+  "version": "1.0.0",
+  "description": "My First Discord Bot",
+  "main": "bot.js",
+  "author": "Will Ortiz, Sam Menaged",
+  "dependencies": {
+    "@discordjs/builders": "^0.12.0",
+    "@discordjs/rest": "^0.3.0",
+    "discord-api-types": "^0.27.2",
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0",
+    "mongodb": "^4.3.1",
+    "winston": "^3.6.0"
+  }
+}
