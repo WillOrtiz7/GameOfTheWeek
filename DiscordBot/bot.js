@@ -121,12 +121,12 @@ bot.on("interactionCreate", async (interaction) => {
           }
         );
 
-        // Giving the GOTW role to the teams playing in the game of the week
         const usersCollection = client.db("gameOfTheWeek").collection("users");
         usersCollection.updateMany(
           {},
           { $set: { votedHome: false, votedAway: false, currentVote: "N/A" } }
         );
+        // Giving the GOTW role to the teams playing in the game of the week
         usersCollection.findOne(
           { userName: homeTeam },
           async function (err, user) {
@@ -157,7 +157,6 @@ bot.on("interactionCreate", async (interaction) => {
 
     case "register":
       console.log(userId, userNickname);
-      await interaction.reply("Successfully registered!");
       client.connect((err) => {
         if (err) {
           console.log(err);
@@ -167,11 +166,19 @@ bot.on("interactionCreate", async (interaction) => {
         // Sets users discord id in database based on their nickname
         usersCollection.findOneAndUpdate(
           { userName: userNickname },
-          { $set: { discordId: userId } }
+          { $set: { discordId: userId } },
+          function (err, data) {
+            // Check if an invalid user tried to register
+            if (!data.value) {
+              interaction.reply("Failed to regiser.");
+              return;
+            }
+            let registeredRole =
+              interaction.guild.roles.cache.get(REGISTEREDROLEID);
+            interaction.member.roles.add(registeredRole);
+            interaction.reply("Successfully registered!");
+          }
         );
-        let registeredRole =
-          interaction.guild.roles.cache.get(REGISTEREDROLEID);
-        interaction.member.roles.add(registeredRole);
       });
 
       break;
@@ -180,9 +187,15 @@ bot.on("interactionCreate", async (interaction) => {
       const currentMatchupCollection = client
         .db("gameOfTheWeek")
         .collection("currentMatchup");
-      client.connect((err) => {
+      client.connect(async (err) => {
         if (err) {
           console.log(err);
+          return;
+        }
+        let matchup = await currentMatchupCollection.findOne({});
+        console.log(matchup);
+        if (!matchup.isLive) {
+          interaction.reply("Error: GOTW has already been started");
           return;
         }
         currentMatchupCollection.findOneAndUpdate(
@@ -224,20 +237,28 @@ bot.on("interactionCreate", async (interaction) => {
     case "endgotw":
       let winner = args[0].value;
       interaction.reply("GOTW has ended, winning team: " + winner);
-      client.connect((err) => {
+      client.connect(async (err) => {
         if (err) {
           console.log(err);
           return;
         }
+        const currentMatchupCollection = client
+          .db("gameOfTheWeek")
+          .collection("currentMatchup");
+        let currentMatchup = await currentMatchupCollection.findOne({});
+        let teamName = currentMatchup.homeTeamName;
         const usersCollection = client.db("gameOfTheWeek").collection("users");
+        let user = await usersCollection.findOne({ userName: teamName });
+        const guild = await bot.guilds.fetch(GUILDID);
+        let member = await guild.members.fetch(user.discordId);
+        let gotwRole = interaction.guild.roles.cache.get(GOTWROLEID);
+        // TRYING TO FIX MULTIPLE END GOTW COMMAND CALLS
+        console.log(gotwRole);
         // Increasing number correct for all users with the winner as their current vote
         usersCollection.updateMany(
           { currentVote: winner },
           { $inc: { numberCorrect: 1 } }
         );
-        const currentMatchupCollection = client
-          .db("gameOfTheWeek")
-          .collection("currentMatchup");
         // Getting users which are currently in the GOTW
         currentMatchupCollection.findOne({}, function (err, data) {
           usersCollection
@@ -247,8 +268,6 @@ bot.on("interactionCreate", async (interaction) => {
             )
             .toArray(async function (err, users) {
               // Removing GOTW role from users with GOTW role
-              let gotwRole = interaction.guild.roles.cache.get(GOTWROLEID);
-              const guild = await bot.guilds.fetch(GUILDID);
               users.forEach(async (user) => {
                 const members = await guild.members.fetch(user.discordId);
                 members.roles.remove(gotwRole);
