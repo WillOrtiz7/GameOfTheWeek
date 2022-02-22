@@ -117,6 +117,7 @@ bot.on("interactionCreate", async (interaction) => {
               homeTeamName: homeTeam,
               awayTeamName: awayTeam,
               isLive: true,
+              isEnded: false,
             },
           }
         );
@@ -236,7 +237,6 @@ bot.on("interactionCreate", async (interaction) => {
 
     case "endgotw":
       let winner = args[0].value;
-      interaction.reply("GOTW has ended, winning team: " + winner);
       client.connect(async (err) => {
         if (err) {
           console.log(err);
@@ -253,12 +253,18 @@ bot.on("interactionCreate", async (interaction) => {
         let member = await guild.members.fetch(user.discordId);
         let gotwRole = interaction.guild.roles.cache.get(GOTWROLEID);
         // TRYING TO FIX MULTIPLE END GOTW COMMAND CALLS
-        console.log(gotwRole);
+        if (currentMatchup.isEnded) {
+          interaction.reply(
+            "ERROR: Game of The Week has already been ended, winner: " + winner
+          );
+          return;
+        }
         // Increasing number correct for all users with the winner as their current vote
         usersCollection.updateMany(
           { currentVote: winner },
           { $inc: { numberCorrect: 1 } }
         );
+        interaction.reply("GOTW has ended, winning team: " + winner);
         // Getting users which are currently in the GOTW
         currentMatchupCollection.findOne({}, function (err, data) {
           usersCollection
@@ -273,6 +279,11 @@ bot.on("interactionCreate", async (interaction) => {
                 members.roles.remove(gotwRole);
               });
             });
+          // Making isEnded true in the database to ensure that we dont end the GOTW multiple times
+          currentMatchupCollection.findOneAndUpdate(
+            {},
+            { $set: { isEnded: true } }
+          );
         });
       });
       break;
@@ -290,10 +301,27 @@ bot.on("interactionCreate", async (interaction) => {
           console.log(err);
           return;
         }
+        const currentMatchupCollection = client
+          .db("gameOfTheWeek")
+          .collection("currentMatchup");
         const usersCollection = client.db("gameOfTheWeek").collection("users");
+        // Resetting all user data
         usersCollection.updateMany(
           {},
-          { $set: { voteHistory: [], numberCorrect: 0 } }
+          {
+            $set: {
+              voteHistory: [],
+              numberCorrect: 0,
+              currentVote: "N/A",
+              votedHome: false,
+              votedAway: false,
+            },
+          }
+        );
+        // Resetting isEnded so we can end the next GOTW
+        currentMatchupCollection.findOneAndUpdate(
+          {},
+          { $set: { isEnded: false } }
         );
       });
   }
