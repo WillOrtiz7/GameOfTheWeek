@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const environment = {\n  production: true,\n  apiUrl: \"https://api2-igwssieg3a-uc.a.run.app\"\n};","map":null,"metadata":{},"sourceType":"module"}

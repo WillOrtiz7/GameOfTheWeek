@@ -1,4 +1,7 @@
 require("dotenv").config();
+const express = require("express");
+const app = express();
+const port = process.env.PORT || 2000;
 
 const DB_USERNAME = process.env.DB_USERNAME;
 const DB_PASSWORD = process.env.DB_PASSWORD;
@@ -21,6 +24,7 @@ const STARTGOTWCOMMANDID = "943993816019513355";
 const SETGOTWCOMMANDID = "943943405921251358";
 const ENDGOTWCOMMANDID = "944023500253966406";
 const ENDSEASONCOMMANDID = "944314111532085269";
+const VOTECOMMANDID = "948656517551374467";
 
 // Initialize Discord Bot
 
@@ -75,6 +79,16 @@ bot.once("ready", async function (evt) {
         },
       ],
     },
+    {
+      id: VOTECOMMANDID,
+      permissions: [
+        {
+          id: REGISTEREDROLEID,
+          type: "ROLE",
+          permission: true,
+        },
+      ],
+    },
   ];
   await (
     await bot.guilds.fetch(GUILDID)
@@ -94,9 +108,9 @@ bot.on("interactionCreate", async (interaction) => {
   // Admin only commands
 
   const { commandName } = interaction;
+  await interaction.deferReply();
   switch (commandName) {
     // !ping
-
     case "setgotw":
       let homeTeam = args[0].value;
       let awayTeam = args[1].value;
@@ -142,7 +156,7 @@ bot.on("interactionCreate", async (interaction) => {
                 const guild = await bot.guilds.fetch(GUILDID);
                 const members = await guild.members.fetch(user.discordId);
                 members.roles.add(gotwRole);
-                await interaction.reply(
+                await interaction.editReply(
                   "Game of the week has been set, " +
                     homeTeam +
                     " vs " +
@@ -168,16 +182,16 @@ bot.on("interactionCreate", async (interaction) => {
         usersCollection.findOneAndUpdate(
           { userName: userNickname },
           { $set: { discordId: userId } },
-          function (err, data) {
+          async function (err, data) {
             // Check if an invalid user tried to register
             if (!data.value) {
-              interaction.reply("Failed to regiser.");
+              interaction.editReply("Failed to regiser.");
               return;
             }
             let registeredRole =
               interaction.guild.roles.cache.get(REGISTEREDROLEID);
             interaction.member.roles.add(registeredRole);
-            interaction.reply("Successfully registered!");
+            await interaction.editReply("Successfully registered!");
           }
         );
       });
@@ -196,14 +210,14 @@ bot.on("interactionCreate", async (interaction) => {
         let matchup = await currentMatchupCollection.findOne({});
         console.log(matchup);
         if (!matchup.isLive) {
-          interaction.reply("Error: GOTW has already been started");
+          await interaction.editReply("Error: GOTW has already been started");
           return;
         }
         currentMatchupCollection.findOneAndUpdate(
           {},
           { $set: { isLive: false } }
         );
-        interaction.reply(
+        await interaction.editReply(
           "@everyone GOTW is now starting, voting has been disabled"
         );
       });
@@ -254,7 +268,7 @@ bot.on("interactionCreate", async (interaction) => {
         let gotwRole = interaction.guild.roles.cache.get(GOTWROLEID);
         // TRYING TO FIX MULTIPLE END GOTW COMMAND CALLS
         if (currentMatchup.isEnded) {
-          interaction.reply(
+          await interaction.editreply(
             "ERROR: Game of The Week has already been ended, winner: " + winner
           );
           return;
@@ -264,7 +278,7 @@ bot.on("interactionCreate", async (interaction) => {
           { currentVote: winner },
           { $inc: { numberCorrect: 1 } }
         );
-        interaction.reply("GOTW has ended, winning team: " + winner);
+        await interaction.editReply("GOTW has ended, winning team: " + winner);
         // Getting users which are currently in the GOTW
         currentMatchupCollection.findOne({}, function (err, data) {
           usersCollection
@@ -291,10 +305,10 @@ bot.on("interactionCreate", async (interaction) => {
     case "endseason":
       let confirmation = args[0].value;
       if (confirmation != "confirm") {
-        interaction.reply('Error: must enter "confirm" as argument');
+        await interaction.editReply('Error: must enter "confirm" as argument');
         return;
       }
-      interaction.reply("Sucessfully ended season");
+      await interaction.editReply("Sucessfully ended season");
 
       client.connect((err) => {
         if (err) {
@@ -324,7 +338,16 @@ bot.on("interactionCreate", async (interaction) => {
           { $set: { isEnded: false } }
         );
       });
+      break;
+
+    case "vote":
+      interaction.editReply("Head over to https://gridironhub.app to vote");
+      break;
   }
 });
+
+app.listen(port, () =>
+  console.log(`Example app listening at http://localhost:${port}`)
+);
 
 bot.login(token);

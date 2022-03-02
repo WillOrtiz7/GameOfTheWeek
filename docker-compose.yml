@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  backend:
+    build: ./Backend
+    volumes:
+      - ./Backend:/app
+    ports:
+      - 3000:3000
+  discordbot:
+    build: ./DiscordBot
+    volumes:
+      - ./DiscordBot:/app
+    ports:
+      - 2000:2000
+  angular-ui:
+    build:
+      context: ./app-ui
+      dockerfile: Dockerfile
+    ports:
+      - "4201:4201"
+    container_name: angular-ui
+    volumes:
+      - ./app-ui:/usr/src/app/app-ui
+      - /usr/src/app/app-ui/node_modules

@@ -15,9 +15,6 @@ const commands = [
     .setDescription("Sets the game of the week")
     .setDefaultPermission(false),
   new SlashCommandBuilder()
-    .setName("server")
-    .setDescription("Replies with server info!"),
-  new SlashCommandBuilder()
     .setName("register")
     .setDescription("Link your account with GridironHub"),
   new SlashCommandBuilder()
@@ -40,6 +37,10 @@ const commands = [
     )
     .setDescription("Ends the season, resetting every teams data")
     .setDefaultPermission(false),
+  new SlashCommandBuilder()
+    .setName("vote")
+    .setDescription("Allows users to vote for the GOTW")
+    .setDefaultPermission(true),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: "9" }).setToken(token);
