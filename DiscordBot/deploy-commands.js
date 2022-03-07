@@ -7,10 +7,16 @@ const commands = [
   new SlashCommandBuilder()
     .setName("setgotw")
     .addStringOption((option) =>
-      option.setName("hometeam").setDescription("Enter the home team name")
+      option
+        .setName("hometeam")
+        .setDescription("Enter the home team name")
+        .setRequired(true)
     )
     .addStringOption((option) =>
-      option.setName("awayteam").setDescription("Enter the away team name")
+      option
+        .setName("awayteam")
+        .setDescription("Enter the away team name")
+        .setRequired(true)
     )
     .setDescription("Sets the game of the week")
     .setDefaultPermission(false),
@@ -24,7 +30,10 @@ const commands = [
   new SlashCommandBuilder()
     .setName("endgotw")
     .addStringOption((option) =>
-      option.setName("winner").setDescription("Winner of the GOTW")
+      option
+        .setName("winner")
+        .setDescription("Winner of the GOTW")
+        .setRequired(true)
     )
     .setDescription("Ends GOTW")
     .setDefaultPermission(false),
@@ -34,12 +43,25 @@ const commands = [
       option
         .setName("confirmation")
         .setDescription("Type confirm to confirm the end of the season.")
+        .setRequired(true)
     )
     .setDescription("Ends the season, resetting every teams data")
     .setDefaultPermission(false),
   new SlashCommandBuilder()
     .setName("vote")
+    .addStringOption((option) =>
+      option
+        .setName("prediction")
+        .setDescription(
+          "User may vote for the GOTW winner by entering the teams name"
+        )
+        .setRequired(true)
+    )
     .setDescription("Allows users to vote for the GOTW")
+    .setDefaultPermission(false),
+  new SlashCommandBuilder()
+    .setName("leaderboard")
+    .setDescription("View the current GOTW prediction leaderboard")
     .setDefaultPermission(true),
 ].map((command) => command.toJSON());
 
