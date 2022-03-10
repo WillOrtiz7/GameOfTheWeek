@@ -433,7 +433,7 @@ bot.on("interactionCreate", async (interaction) => {
           console.log(err);
           return;
         }
-        if (!currentMatchup.isLive) {
+        if (!matchup.isLive) {
           interaction.editReply("Error: Voting period has ended");
           return;
         }
